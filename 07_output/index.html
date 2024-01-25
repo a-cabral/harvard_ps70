@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PS70: Intro to Digital Fabrication</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">PS70: Intro to Digital Fabrication</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a class="nav-link" href="/ps70/index.html">Home</a></li>
+        <li><a class="nav-link" href="/ps70/about.html">About</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid bg-3 text-center">    
+  <h3>Week 7: Output Devices</h3><br>
+</div>
+
+
+<xmp style="display:none;">
+<br> 
+
+
+### Assigment
+
+This week, we were assigned with using an output device we haven't used before, and write a microcontroller program that integrates at least one input device and one output device using C++ class structure. We were also tasked with preparing CAD files for CNC milling for next week.
+
+#### Output Devices
+
+I decided to use an RGB LED for my new output device. The goal was simple: to toggle the colors on an RGB LED using a button as an input device. A button is basically a boolean device - when the button is pressed, the boolean result from digitalRead() is false, and vice versa. I wanted to keep the setup relatively simple so that I could practice implementing class structure, and defining my own class from scratch, something I am not very experienced with.
+
+Using an Arduino Uno as my microcontroller, I created a very simple circuit incorporating the RGB LED and the button. The R, G, and B prongs on the LED are connected to pins 9, 10, and 11, respectively, on the Arduino, while the button is connected to pin 2. The circuit is shown below:
+
+<img src="/ps70/rgb_circuit.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+I then created a class called RGB_LED, from which I can declare an object defining the LED I have in my circuit. It is defined by the pin numbers of each color, as well as an integer defining the current color of the LED. In the update function of the class, the color of the LED changes depending on what the current state of the LED is, and this update function is triggered by the press of the button. The desired order of the color toggle was Red, Green Blue, Red, etc. The code for this is shown below:
+
+#### Code:
+
+<pre><code>
+
+const int buttonPin = 2;
+
+class RGB_LED {
+
+  int red_pin;
+  int green_pin;
+  int blue_pin;
+  int current_state;
+
+  public:
+  RGB_LED(int red, int green, int blue, int cs) {
+    red_pin = red;
+    green_pin = green;
+    blue_pin = blue;
+    pinMode(red_pin,OUTPUT);
+    pinMode(green_pin, OUTPUT);
+    pinMode(blue_pin, OUTPUT);
+    current_state = cs;
+  }
+  
+  int Update(){
+
+    if (current_state == 3) {
+      current_state = 0;
+    }
+
+    if (current_state == 0) {
+      digitalWrite(red_pin   , HIGH);  
+      digitalWrite(green_pin , LOW);  
+      digitalWrite(blue_pin  , LOW);
+      current_state = current_state+1;
+    }
+    else if (current_state == 1) {
+      digitalWrite(red_pin   , LOW);  
+      digitalWrite(green_pin , HIGH);  
+      digitalWrite(blue_pin  , LOW);
+      current_state = current_state+1;
+    }
+    else if (current_state == 2) {
+      digitalWrite(red_pin   , LOW);  
+      digitalWrite(green_pin , LOW);  
+      digitalWrite(blue_pin  , HIGH);
+      current_state = current_state+1;
+    }
+    return current_state;
+
+  }
+
+};
+
+int red = 9;
+int green = 10;
+int blue = 11;
+int current_state;
+
+void setup() { 
+  Serial.begin(9600);
+  pinMode(buttonPin, INPUT_PULLUP);
+  current_state = 0;
+}
+
+void loop() {
+  RGB_LED rgb(red,green,blue,current_state);
+  boolean button_pressed = digitalRead(buttonPin);
+  if (button_pressed == false) {
+    current_state = rgb.Update();
+  }
+}
+
+</code></pre>
+
+The video clip below shows the functionality of this code:
+
+(If the video doesn't play, please navigate to this <a href="https://youtu.be/nLXSNEYpp_g">Youtube Link</a>.)
+
+<iframe width="1019" height="573" src="https://youtu.be/nLXSNEYpp_g" frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe> 
+
+#### CAD for CNC
+
+Please see next week's page <a href="https://nchoi22.github.io/ps70/08_cnc/index.html">here</a> for more details. I created an STL file for a CNC milling job using CAD of Manchester United's (my favorite soccer club) logo. Please find an image and downloadable STL file below:
+
+<img src="/ps70/manu_stl_final.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+<a download href="/ps70/manchester_v4.stl">Download the STL File</a>
+
+</xmp>
+</body>
+
+<script src="../strapdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" ></script>
+
+</html>

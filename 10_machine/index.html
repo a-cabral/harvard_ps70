@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PS70: Intro to Digital Fabrication</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">PS70: Intro to Digital Fabrication</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a class="nav-link" href="/ps70/index.html">Home</a></li>
+        <li><a class="nav-link" href="/ps70/about.html">About</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid bg-3 text-center">    
+  <h3>Week 10: Machine End Effectors</h3><br>
+</div>
+
+
+<xmp style="display:none;">
+<br> 
+
+
+#### Friday Machine
+
+This week, we were assigned with building a "sidewalk plotter", a 2 degree of freedom drawing machine. We were split into two teams, and I joined the Friday team! Within the team, we split up tasks into a Hardware and Software Team, and I was part of the Software Team with Bella and David Garcia. 
+
+Please see <a href="https://bellatarantino.com/ps70/assignments/drawbot.html">Bella's</a> page for additional documentation for the software team. As Bella mentions, unfortunately teamwork and team integration wasn't the best on all fronts. Unfortunately, by the time the hardware was complete, there were only a couple of days to test software, and an end-effector was not ready until the night before.
+
+Once able to test, the software team poured a lot of energy into trying to use a software FluidNC in order to convert images and SVG files into gcode instructions for any custon CNC machine, such as our drawing machine. However, after countless hours of running into issues, reflashing firmware, and more, we realized it was a huge risk to keep trying this method. Thus, we decided to go back to the given example code and go from there. 
+
+At some point, we realized that our machine could draw a circle if the wheels on our end effector spun in opposite directions - effectively, we could operate in polar coordinates to draw a circle. Thus, we modified our software to have functions for drawing circles, lines, and spirals (different compinations of spinning the machine and moving the end effector linearly), and to have buttons on the web browser to initiate these functions. The software team also installed a limit switch to one end of the machine, in order to try and home the machine. However, we found that whenever the home() function was called in our Arduino sketch, the program would not work. Short on time, we were not able to figure out how to resolve this issue.
+
+I think the whole team realized a lot about teamwork, and in particular, integration of different sub-parts of a big project like our drawing machine. It was a mistake to partition the work so clearly, and even schedule different work hours. It would have been nice to have the hardware prepared a bit earlier, but in hindsight I could have helped on hardware as well or begun testing concurrently on the example machine Nathan built. Overall, we saw how important team communication is, and how long and difficult integrating different parts of a project can be, so this was a great learning experience.
+
+Please find a demo of the circular motion below:
+
+(If the video doesn't play, please navigate to this <a href="https://youtu.be/ve-TaIXkrPA">Youtube Link</a>.)
+
+<iframe width="1019" height="573" src="https://youtu.be/ve-TaIXkrPA" frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe> 
+
+
+#### Code:
+
+Download .ino file <a download="/ps70/fri_machine.ino">here</a>
+
+
+</xmp>
+</body>
+
+<script src="../strapdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" ></script>
+
+</html>

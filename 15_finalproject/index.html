@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PS70: Intro to Digital Fabrication</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">PS70: Intro to Digital Fabrication</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a class="nav-link" href="/ps70/index.html">Home</a></li>
+        <li><a class="nav-link" href="/ps70/about.html">About</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid bg-3 text-center">    
+  <h3>FINAL PROJECT</h3><br>
+</div>
+
+
+<xmp style="display:none;">
+<br> 
+
+
+### Final Project Idea
+
+Keeping in line with my interests outlined in <a href="nchoi22.github.io/ps70/01_intro/index.html">Week 1</a>, I decided to create a PID control system for my final project. "PID" stands for proportional, integral, and derivative, respectively, and is a very common and powerful way to design and tune effective control systems. I decided to build a relatively simple, yet challenging control system: balancing a ping pong ball on the middle of a beam. A sample setup is shown below:
+
+<div class="container-fluid bg-3 text-center">    
+  <div class="row">
+    <div class="col-sm-3">
+      <img src="/ps70/sample_beam.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+  </div>
+</div><br>
+
+As we can see, a ball can freely roll along a beam with one degree of freedom: its angle. Though the setup is relatively simple, this type of control system is analagous to much more complicated ones, such as control thrusters to maintain the orientation of a rocket.
+
+Initially, I also wanted to gamify this setup, allowing a user to control the angle of the beam manually using a remote control. This controller would have button and/or tilt control, using buttons and IMU's, respectively, to change the angle of the beam. However, just creating the automatic controller itself proved to be a big challenge, an this became the focus of the project without the gamification.
+
+
+### Final Demo Video
+
+Before getting into the nitty gritty of how this project came together, below is a video showing the current functionality of the PID controller. After many iterations, though we don't have a perfect controller, the ball does stay close to the center of the beam!
+
+(If the video doesn't play, please navigate to this <a href="https://www.youtube.com/watch?v=3Fz6Z_iDU54&ab_channel=NoaChoi">Youtube Link</a>.)
+
+<iframe width="1019" height="573" src="https://www.youtube.com/embed/3Fz6Z_iDU54&ab_channel=NoaChoi" frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe> 
+
+### Build Process and Details
+
+In this section, I will outline in detail various steps throughout the development of this project.
+
+#### The Remote
+
+Initially, I was planning to design a remote control for the "game" version of the controller. Thus, I wanted to implement radio communication between two ESP 32 S2 microcontrollers. Initially, I tried achieving this using LoRa RMF95W radio modules, but then pivoted to using the <a href="https://nathanmelenbrink.github.io/ps70/09_networking/index.html">ESP_NOW protocol</a> for direct communication between two ESP microcontrollers. Of course, since the game part of the project was abandoned, this portion was not completed. However, progress on this front can be found on the <a href="nchoi22.github.io/ps70/09_iot/index.html">IoT and Radio</a> page.
+
+#### The Beam Machine (Attempt #1)
+
+I first had to come up with a design for the actual beam. I had several design considerations in creating my setup: How long should the beam be? What kind of motor should I use to control the angle of the beam? How will the beam and motor be coupled? What sensor should I use to provide input data to my system?
+
+My initial designs were inspired by examples found online of previous theses and projects done on similar ideas. Mostly due to constraints on materials in the lab, I decided to use four aluminum rods of ~9.5mm diameter and ~1 foot length to create a railing to act as a beam. Thus, I also needed to design end caps that would hold the rods in place from either end of the beam.
+
+I decided to use the ultrasonic sensor HC-SR04, attached to one end of the beam. That way, I could use the ball's position, read from this sensor, as the INPUT to the control system, with the beam's angle controlled by a motor as the OUTPUT of the system.
+
+Next, I decided to use the NEMA17 stepper motor as my actuator to control the beam angle. Although many examples found online used servo motors, I opted for the stepper motor as it has higher holding torque than servo motors, which was the motor of choice for many examples online. The higher torque was important as my beam, being made of aluminum, was not light. I also chose to have the motor attach to the beam at the beam's center. I then had to decide how the motor would become coupled, or attached, to the beam. Luckily, Nathan and the PS70 Lab had a pan-tilt machine, with open-source 3D printable parts, readily available for me to draw inspiration from. This pan-tilt machine is shown below:
+
+<div class="container-fluid bg-3 text-center">    
+  <div class="row">
+    <div class="col-sm-3">
+      <img src="/ps70/pantilt.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+  </div>
+</div><br>
+
+As you can see, this design provides mounts (green) in the front and back of the NEMA17 that can allow the motor to be bolted to a stable surface, and also includes an arm (black) that contains a rotary bearing. The NEMA17 is connected to a 20 tooth timing pulley, which is in turn connected to a 60 tooth timing pulley (orange) via a 200mm long timing belt. The 60 tooth timing pulley (orange) is then connected to a holder. With all of this setup available, I was free to use these open source designs to couple my motor and beam together. All I needed to design was the beam holder.
+
+<div class="container-fluid bg-3 text-center">    
+  <div class="row">
+    <div class="col-sm-3">
+      <img src="/ps70/iter1_1.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+    <div class="col-sm-3">
+      <img src="/ps70/iter1_2.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+    <div class="col-sm-3">
+      <img src="/ps70/iter1_3.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+  </div>
+</div><br>
+
+Above are images of the first iteration of the beam design, displaying what the end caps and beam holder look like, and the overall setup of the machine. It's clear in the first image that the beam holder needed a redesign - it didn't allow the ball to pass through the middle. It was also apparent that the end cap needed to be designed to allow for the ultrasonic sensor to be stable. 
+
+A redesign in the parts involved multiple iterations of CADing and 3D prints, resulting in a beam with wider top rods to allow room for the ball in the center of the beam (and to fit the ultrasonic sensor in between the two top rods), a new beam holder (imaged below), and a new end cap that fits the emitter and receiver of the ultrasonic sensor snugly for stability. 
+
+<div class="container-fluid bg-3 text-center">    
+  <div class="row">
+    <div class="col-sm-3">
+      <img src="/ps70/beam_holder_final.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+    <div class="col-sm-3">
+      <img src="/ps70/setup2.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+  </div>
+</div><br>
+
+The image on the right shows the final hardware setup at this stage in the project. The ultrasonic sensor is now fit within the end cap, and the motor rig is mounted to a piece of wood, with added weights for stability. Due to the design of the motor holds, it was easy to thread M3 screwholes into the wood and mount the rig into the wood.
+
+Getting to this point alone took a lot of time and iterations. Concurrently, I was setting up the circuitry and code that would drive the controller, testing out each component individually before putting them together in an Arduino sketch. The circuit contains: ESP32S2 microcontroller, NEMA17 Stepper Motor, A4988 Motor Driver, ultrasonic sensor HC-SR04, and a 12V wall plug power source (for the stepper motor).
+
+After the hardware was complete, I added PID control software to the Arduino sketch. The PID control software can be found below in the "Code" section (note: the code found there is the final code, not the code used during this phase of the project. The code from this phase is not included because it is mostly very similar, except for what sensor is being used). Upon testing, the results were not great, as can be seen below:
+
+(If the video doesn't play, please navigate to this <a href="https://youtube.com/shorts/sUQp7hVfb_Q">Youtube Link</a>.)
+
+<iframe width="1019" height="573" src="https://youtube.com/shorts/sUQp7hVfb_Q" frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe> 
+
+Clearly, the controller was not working as intended. A huge problem I discovered during testing was that the ultrasonic sensor was very inaccurate only in the center portion of the beam. This was because of how the ultrasonic sensor works and the geometry of the ping pong ball. The sensor pings whatever object is in front of it with a 40kHz sound wave, and calculates the distance to the object based on how long it takes for the signal to get back to the sensor's receiver. However, at a certain point, because of how far apart the receiver and emitter are and because the ping pong ball is a sphere, the emitted signal will scatter off of the ball and not bounce directly back to the receiver, giving faulty results. 
+
+The imprecision of the sensor severely limited the ability to control the ball's position. However, due to the fact that the sensor was accurate between the sensor and the center of the beam, I was able to sort of control the ball within this section of the beam:
+
+(If the video doesn't play, please navigate to this <a href="https://youtu.be/49g47TpM4Ro">Youtube Link</a>.)
+
+<iframe width="1019" height="573" src="https://youtu.be/49g47TpM4Ro" frameborder="0" 
+allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen> </iframe> 
+
+#### The Beam Machine (Attempt 2)
+
+Due to the sensor's limitations, I decided to try this out with a different sensor. Per Nathan's recommendation, I went ahead and ordered the VL53L1X Time-of-Flight (ToF) sensor (imaged below).
+
+<div class="container-fluid bg-3 text-center">    
+  <div class="row">
+    <div class="col-sm-3">
+      <img src="/ps70/VL.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+  </div>
+</div><br>
+
+This sensor uses the time it takes for an infrared laser to bounce off of an object to measure the object's distance, and the emitter and receiver are very close together. In addition, this sensor has a proximity range of ~3cm - 4m. Thus, theoretically, this sensor should work very well with this system.
+
+Upon receiving the sensor, I redesigned the end cap to fit the sensor in snugly for stability. I very slightly overcut the opening, but a little bit of masking tape on the sensor did the trick:
+
+<div class="container-fluid bg-3 text-center">    
+  <div class="row">
+    <div class="col-sm-3">
+      <img src="/ps70/endcap_final.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+    <div class="col-sm-3">
+      <img src="/ps70/sensor_fit.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+  </div>
+</div><br>
+
+After soldering wires to the sensor, I followed <a href="https://learn.adafruit.com/adafruit-vl53l1x/arduino">this</a> Adafruit tutorial to start reading data. Luckily, the sensor didn't require any calibration. However, the sensor requires I2C communication protocol, which I found wasn't very compatible with the ESP32S2 Dev Board. After some troubleshooting, I decided to just switch over completely to the ESP32 Dev Board for my microcontroller. I made sure to carefully transfer and rewire the stepper motor to the new microcontroller as well, and was able to reintegrate everything onto the new microcontroller. The setup is shown below:
+
+<div class="container-fluid bg-3 text-center">    
+  <div class="row">
+    <div class="col-sm-3">
+      <img src="/ps70/final_setup.png" class="img-responsive" style="width:100%" alt="Image"></a>
+    </div>
+  </div>
+</div><br>
+
+Using this new sensor was a success! Integration was relatively seamless, and the data was accurate throughout the beam. Thus I was able to implement a PID control loop using the sensor's data as input. Every time the microcontroller loops through in void loop(), it gets a distance reading from the sensor to get the ball's current position. Based on the time since the last loop, as well as various error terms (for example, the "proportional error", or pError the code below, is how far the ball is from the desired "Setpoint"), an effective output is produced that corresponds to an angle the beam should move to. When the program starts, the beam should be manually set to around 0 degrees, and the program will initialize the current position of the motor to be 0 degrees. In the code, upper and lower bounds are placed on the "motor position", or angle, that the stepper motor can go to, since in the physical setup the beam can't surpass certain angles. The bounds were determined by a physical measurement of the maximum angle the beams can hit, and dividing that angle by the motor's step-angle of 1.8 degrees.
+
+The PID control constants, Kp, Ki, and Kd were manually found by trial and error. I attempted to use MATLAB to model and solve for optimal PID constants. However, based on system dynamics found in literature, and real physical parameters of my system, MATLAB was unable to find a controller that tracked a desired reference position (center of the beam). Moreover, many previous projects that modeled the PID controller through simulation ended up largely deviating from the simulated control constants in practice. Thus, I tuned the controller manually and found a relatively good combination of constants, though there is sure to be an optimal set of control constants that can achieve better performance.
+
+The final performance of the controller is seen in the final demo video, which is at the top of this page!
+
+
+### Code
+
+<pre><code>
+
+#include "esp_now.h"
+#include "WiFi.h"
+#include "AccelStepper.h"
+#include "Adafruit_VL53L1X.h"
+
+#define IRQ_PIN 2
+#define XSHUT_PIN 3
+
+// initialize distance sensor
+Adafruit_VL53L1X vl53 = Adafruit_VL53L1X(XSHUT_PIN, IRQ_PIN);
+
+// Define constants for PID control:
+
+double pError,iError,dError;  //Error values associated with PID
+double Output;          //Sum of error values multiplied by their corresponding gains
+double prevError;         //Error from previous iteration
+unsigned long prevTime,now;   //Previous time and current time
+double dt;            //Change in time
+
+int Setpoint = 120;         //Desired point on the beam (mm)
+
+//Gains
+float Kp = 0.16;        //Proportional constant
+float Ki = 0.00005;       //Integration constant
+float Kd = 9;           //Derivation constant
+
+int distance;
+
+// Define an accelstepper object
+AccelStepper stepper(1,18,19);
+
+ 
+void setup() {
+  // Init Serial Monitor
+  Serial.begin(115200);
+
+  Wire.begin();
+  if (! vl53.begin(0x29, &Wire)) {
+    Serial.print("Error on init of VL sensor: ");
+    Serial.println(vl53.vl_status);
+    while (1)       delay(10);
+  }
+  Serial.println("VL53L1X sensor OK!");
+
+  Serial.print("Sensor ID: 0x");
+  Serial.println(vl53.sensorID(), HEX);
+
+  if (! vl53.startRanging()) {
+    Serial.print("Couldn't start ranging: ");
+    Serial.println(vl53.vl_status);
+    while (1)       delay(10);
+  }
+  Serial.println("Ranging started");
+
+  // Valid timing budgets: 15, 20, 33, 50, 100, 200 and 500ms!
+  vl53.setTimingBudget(50);
+  Serial.print("Timing budget (ms): ");
+  Serial.println(vl53.getTimingBudget());
+
+  stepper.setMaxSpeed(3000.0);
+  stepper.setAcceleration(1000.0);
+  stepper.setSpeed(600);
+  stepper.setCurrentPosition(0);
+
+  prevTime = 0;
+}
+ 
+void loop() {
+
+
+  //PID Algorithm
+  now = millis();
+  dt = (now - prevTime);
+  distance = getDistance();
+
+  Serial.print("Distance (mm): ");
+  Serial.println(distance);
+
+  pError = Setpoint - distance;
+  dError = (pError - prevError) / dt;
+  iError = iError + (pError * dt);
+  if (iError > 10) {
+    iError = 10;        //Error greater than 10 are ignored; noise
+  }
+
+  Output = Kp * pError + Ki * iError + Kd * dError;
+  Output = -1*Output;
+
+  //Upper and Lower Bound of PID
+  if (Output >12) {
+    Output = 12;
+  }
+  if (Output <-12) {
+    Output = -12;
+  }
+
+  
+
+  stepper.moveTo(Output);
+  stepper.runToPosition();
+
+  //Serial output
+  Serial.print("PID: ");
+  Serial.println(Output);
+  
+  //Set previous error and time
+  prevError = pError;
+  prevTime = now;
+
+}
+
+
+// this function gets current distance ball is at using the ultrasonic sensor
+int getDistance() {
+  int16_t distance;
+
+  if (vl53.dataReady()) {
+    // new measurement for the taking!
+    distance = vl53.distance();
+    vl53.clearInterrupt();
+    return distance;
+
+    /*
+    if (distance == -1) {
+      // something went wrong!
+      Serial.print("Couldn't get distance: ");
+      Serial.println(vl53.vl_status);
+      return;
+    }
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println(" mm");
+
+    // data is read out, time for another reading!
+    vl53.clearInterrupt();
+    */
+  }
+}
+}
+
+</code></pre>
+
+### Electronics
+
+Please check back for a full circuit diagram.
+
+### Materials
+
+Ping pong ball<br>
+VL53L1X ToF sensor<br>
+ESP32 Dev<br>
+4 aluminum beams (9.5mm diameter, 300mm length)<br>
+NEMA 17 Stepper Motor<br>
+A4988 Stepper Driver<br>
+100uF capacitor<br>
+Jumper wires<br>
+M3 screws and nuts<br>
+6202 bearing<br>
+3d printed parts (.stl files)<br>
+
+
+### Downloadable Files
+
+1. <a download="/ps70/beam_holder.stl">Beam Holder STL File</a><br>
+2. <a download="/ps70/endcap.stl">Beam End Cap STL File</a><br>
+
+### Discussion
+
+Overall, I very much enjoyed working on this project! I certainly wish I had begun working on the project sooner, incorporating more of the weekly assignments. I faced many challenges throughout the development of this project, particularly with the hardware and electronics. I iterated countless times on 3D printed parts, accidentally fried an A4988 driver because of a misplaced capacitor, faced wiring issues, and much more. Although most of the time, my controller wasn't working, I think one of the best feelings from the project was the experience of rapidly fabricating and altering my physical system design to fit what I needed (in terms of the hardware design). It was also super satisfying to recognize what the biggest limitation of my project was, the ultrasonic sensor, and be able to improve my project by a huge amount with an improved sensor. 
+
+Although I gained a lot from this experience, because of how much time was spent on hardware design, electronics, and coding, not much time was spent on actual control theory. It would be great to be able to better model my system dynamics on MATLAB and/or Simulink, and delve deeper into the PID tuning process through simulations and manual tuning. Of course, my system is certainly subject to sensor noise, which is something one must deal with in control theory. It would also be great to explore ways to reduce sensor noise, such as combining multiple sensors and aggregating data through sensor fusion. 
+
+It also would have been nice to make the project more polished aesthetically, such as having all of my electronics neatly put away in an encasing. In any case, I very much enjoyed the process. It makes me confident I can work on more control projects like this moving forward, and gives me appreciation for the challenges of creating a robust physical mechanism. I'd like to thank Nathan, the PS70 teaching staff, and my classmates for helping me throughout this course! There's a lot I could have done better, and time I could have better managed, but I've had an amazing time. Thank you!
+
+</xmp>
+</body>
+
+<script src="../strapdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" ></script>
+
+</html>

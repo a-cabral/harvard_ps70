@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PS70: Intro to Digital Fabrication</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+  </style>
+
+
+
+</head>
+
+<body>
+
+  <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">PS70: Intro to Digital Fabrication</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a class="nav-link" href="/ps70/index.html">Home</a></li>
+        <li><a class="nav-link" href="/ps70/about.html">About</a></li>
+      </ul>
+    </div>
+  </div>
+  </nav>
+
+
+
+<div class="container-fluid bg-3 text-center">    
+  <h3>Week 8: CNC, Molding and Casting</h3><br>
+</div>
+
+
+<xmp style="display:none;">
+<br> 
+
+
+#### Assignment
+
+This week, we were tasked with creating things using CNC machines and molding and casting techniques. 
+
+#### Molding and Casting
+
+For molding and casting, I wanted to be able to create objects out of bismuth alloy, as it has a low melting point (so it's easy to use as casting material) and has a high quality finish due to it being metal. I decided to make a figurine of one of my favorite Pokemon: Piplup. 
+
+I first wanted to create a positive of Piplup, or in other words, an outline of the actual shape of Piplup that we can put molding material into to create a negative. I decided not to use the SRM-20 CNC milling machine for this, as our Piplup has a shape that would be pretty difficult for a milling machine to create accurately. Thus, I decided to 3D print the positive, using <a href="https://www.3dforprint.com/3dmodel/pipluppokemon/7779">this</a> existing STL file for Piplup's body. I then used Fusion 360 to enclose Piplup in a box, as shown below:
+
+<img src="/ps70/piplup_inbox.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+Next, I mixed a few tablespoons of SORTA-CLEAR 37, solutions A and B, together in a 1:1 ratio to create my molding material. After thoroughly mixing the two solutions together, I poured the molding material into the 3D-printed positive, as shown below, and let it sit to cure for about 5 hours. 
+
+<img src="/ps70/molding_pip.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+After the mold cured, I had a very hard time getting the mold out of the positive. This was likely due to the fact that Piplup has a very large head, and the way Piplup's arms jut upwards and outwards made it very difficult to take out. After about half an hour of trying various ways of pulling out the mold, I eventually resorted to simply breaking the plastic positive to get the mold out.
+
+<img src="/ps70/hammer.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+Even after getting the walls and base off of the mold, the next challenge was extracting the Piplup itself. I had to use pliers to hold on to Piplup, while carefully stretching the mold as needed to take it out. The result was a great mold as my negative:
+
+<img src="/ps70/mold.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+Finally, I was ready to melt bismuth alloy and insert it into the mold. This was the easiest part of the process. However, once the bismuth alloy was poured and hardened inside the mold, I had similar challenges getting our bismuth Piplup out of the mold. After a couple tries of breaking the relatively soft metal and repouring new bismuth alloy, I decided to just cut through the silicon mold to take Piplup out. The result was decent and is shown below, but I think the shape of Piplup made the entire process pretty difficult. Next time, it might be worth creating two positives, one for each half of Piplup, in order to do an injection mold rather than one positive of Piplup's entire body. Still, I'm happy with the result!
+
+<img src="/ps70/metal_piplup.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+Downloadable Files:
+1. <a download href="/ps70/piplup_positive.stl">Piplup Positive STL File</a>
+
+#### CNC Milling
+
+I then wanted to practice creating wax positives using the CNC Milling machine in the lab, the SRM-20. For this, I wanted to recreate the crest (logo) of my favorite soccer club, Manchester United. I first found an STL file of the Manchester United logo, and again merged it into an open-face box similar to what I did with Piplup. The final STL file is shown below:
+
+<img src="/ps70/manu_stl_final.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+The final STL file went through many revisions. I loaded draft STL files into <a href="mods.cba.mit.edu">MIT's Mods</a>, a great web server for feeding in STL files for various CNC milling machines. I revised the STL, mainly for size and depth, based on the size of the wax block I had and the settings for the SRM-20. 
+
+I first did a roughing pass, utilizing a 1/8 inch drill bit positioned about a millimeter above the top of the wax block. This was done to remove most, but not too much, material while achieving a rough outline of the final product. This is shown below:
+
+<img src="/ps70/rough_pass.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+Then, I did a finishing pass, for which I used a 1/32 inch drill bit that was positioned such that it rested right on top of the wax block. This worked out quite decently, and the final product is shown below:
+
+<img src="/ps70/final_pass.png" class="img-responsive" style="width:100%" alt="Image"></a>
+
+This method actually achieved quite good precision, with the letters of "Manchester" and "United" on the logo came out pretty clear. Some finer details on the center "devil" of the logo were missing, and perhaps using a finer drill bit could have improved this. This positive could be used to create a mold of the logo for molding and casting, like we did with Piplup above!
+
+Downloadable Files:
+1. <a download href="/ps70/manchester_v4.stl">Manchester United Logo Positive STL File</a>
+
+
+
+</xmp>
+</body>
+
+<script src="../strapdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" ></script>
+
+</html>
