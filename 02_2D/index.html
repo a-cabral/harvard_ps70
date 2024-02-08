@@ -67,23 +67,23 @@ I sketched out my initial design in my personalized Hello Kitty lifeplanner (yes
 
 Having the front attached to the bottom with a score line made it easier to assemble, but did require me to create a separate sketch for the door.
 
-<img src="/harvard_ps70/02_2D/pics/sketch2.jpg" alt="a small 3D sketch of a box" height="200">
+<img src="/harvard_ps70/02_2D/pics/sketch2.jpg" alt="a small 3D sketch of a box" height="300">
 
-## Box 3D Modeling
+## Box 2D Modeling
 
 I started by just trying to figure it out in Fusion 360 based on what we learned in class. I got pretty far along then used Nathan's video for the teeth and mirroring. I had already made rectangles for the four panels, but Bobby showed me how I could mirror just small parts, which was helpful to mirror just the teeth then. I made my box with 8 teeth and played around by changing the parameters to use less, which left a lot of extra lines but generally worked.
 
-<img src="/harvard_ps70/02_2D/pics/fusion1.png" alt="Fusion 3D sketch of box with scoring lines and teeth" height="200">
+<img src="/harvard_ps70/02_2D/pics/fusion1.png" alt="Fusion 3D sketch of box with scoring lines and teeth" height="300">
 
 
 I made two separate sketches, one for the outline of the box and another for the door. I also cut them separately in the laser cutter, which required me taping down the box to score the inside of the front flap for the door.
 
-<img src="/harvard_ps70/02_2D/pics/fusion2.png" alt="Fusion 3D sketch of box side with flap" height="200">
+<img src="/harvard_ps70/02_2D/pics/fusion2.png" alt="Fusion 3D sketch of box side with flap" height="300">
 
 
-Initially I planned to engrave a beaver on the door, but after learning how to use the vinyl cutter I decided to instead put a beaver sticker on the door. This was pretty easy by just using Inkscape to import a file then searching for beaver and pasting that in.
+Initially I planned to engrave a beaver on the door, but after learning how to use the vinyl cutter I decided to instead put a beaver sticker on the door. This was pretty easy by just using Inkscape to import a file then searching for beaver and pasting that in. But Sophia said that it looked like a turtle, maybe because I chose lime green :D.
 
-<img src="/harvard_ps70/02_2D/pics/cut1.jpg" alt="a laser cut box from the inside" height="300">
+<img src="/harvard_ps70/02_2D/pics/cut1.jpg" alt="a laser cut box from the inside" height="400">
 
 Because the teeth didn't fit together perfectly, I had to glue the box together, which I did on the inside creases to hide the glue. In retrospect, less teeth may have been useful and I could have added an offset for the angle to fit the teeth better.
 
@@ -92,176 +92,30 @@ Because the teeth didn't fit together perfectly, I had to glue the box together,
 
 Then I found a "doorknob" in the Toy Parts bin, which I glued onto the door. Finally, I went to the white box in the lab to take some glam shots of my box and used it to store some parts I grabbed from the SEC EE Active Learning Lab.
 
-<img src="/harvard_ps70/02_2D/pics/glam1.jpg" alt="a laser cut box with beaver sticker and doorknob on door" height="300">
+<img src="/harvard_ps70/02_2D/pics/glam1.jpg" alt="a laser cut box with beaver sticker and doorknob on door" height="400">
+
+<br>
+
+## Fusion Tutorial
+
+I went through some of the CAM CAD tutorials, the main issue I still have is around mirroring. I probably need to practice more but enjoyed learning more about angles and such.
+
+<img src="/harvard_ps70/02_2D/pics/tutorial.png" alt="fusion 360 tutorial image" height="300">
 
 
+## 3D Modeling
 
-## Press-Fit Construction Kit
+I have an autoimmune disease so take a LOT of medications. One of the former projects that was interesting to me was the smart pill box. But actually, I realized that I don't need a smart pill box, just one that stays together, as the plastic ones I buy at the pharmacy keep breaking.
 
-Creating a press-fit construction kit offered my first foray into computer aided design (CAD) using Fusion 360. We were tasked to make press-fit pieces of cardboard that could be assembled in multiple ways, so I decided to start with a polygon to keep things simple. After seeing examples of kits made with triangles, squares, and hexagons, I decided to make pentagons with notches on each side, as I couldn't intuitively imagine what sorts of structures could come out of pentagons coming together. The process started with creating a 2D sketch of my pentagon, setting user parameters on Fusion 360 for the pentagon's side length, notch depth, kerf, etc. The starting parameters are shown below.
+So I decided to make a 3D model of a pill box. I'll start simple with one small container then scale up to a week long box with one container per day then scale up again to a week long box with multiple containers per day.
 
-<img src="/harvard_ps70/02_2D/pics/pentagon_parameters.PNG" alt="pent-params" width="600" height="240">
-
-Using these dimensions, I created a 3D extrusion with the given material thickness (measured from an example piece) and gave generous fillet of 2mm to create a more flower-like pattern. This is shown in these images below:
-
-
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/pentagon_img.PNG" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3"> 
-      <img src="/harvard_ps70/02_2D/pics/3d_pentagon.PNG" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-  </div>
-</div><br>
-
-An initial print of these pentagons looked great! However, an initial measurement of the width of the notches indicated that they were about a millimeter too wide, and so the pieces had a loose fit. 
-
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/pent_pieces.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3"> 
-      <img src="/harvard_ps70/02_2D/pics/kerf.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-  </div>
-</div><br>
-
-A member of the teaching staff suggested that I play around with the intensity and speed of the laser on the laser cutting machine until the kerf was just right, and I landed on 53% laser intensity and 20% speed as the settings that gave a perfect fit for my pentagons. In the future, I think it would be better to go back to Fusion 360, and adjust my kerf parameter there to get the fit just right, while trying to keep the laser cutter settings constant - this is what I'll do for future work with the laser cutter. 
-
-Once I had pieces that fit just right, it took some experimenting to figure out what sorts of structures I could make with them. I found that I could still make cool snowflake patterns with my pieces; both a small and large version of my pentagon snowflakes are shown below!
-
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/mini-snowflake.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3"> 
-      <img src="/harvard_ps70/02_2D/pics/big_snowflake.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-  </div>
-</div><br>
-
-Software Used:
-1. Fusion 360
-2. InkScape
-
-Materials Used:
-1. Cardboard
-2. Laser Cutter (model to be added)
-
-Downloadable Files:
-1. <a download href="/harvard_ps70/pentagon.f3d">Download 3D Model</a>
-
-### Future Work with Laser Cutting
-
-I have more ideas I'd like to try using the laser cutter, and I will be updating this page once I complete them in the coming weeks! 
-
-1. 12 pentagons can actually combine to make dodecahedrons. I'd like to make pieces that can connect my pentagon pieces at just the right angle to build this 3D hollow structure.
-2. I'd love to make some sort of container with a living hinge!
+I found a good <a href="https://www.youtube.com/watch?v=iSBsBTMsGTk">YouTube tutorial</a> about making a 3D hinged box that I used to get a head start. This helped me learn about the Extrude tool, Shell tool, and making hinges. The problem with this tutorial is that it assumes a hinge outside the box and I'd rather just have a sort of flap that is scored and opens, so I'll have to play around with that.
 
 
-## Fusion 360 Tutorials and Modeling
-
-Next, I moved on to following <a href="https://www.youtube.com/watch?v=vVFYrBClkPc&ab_channel=CADCAMTutorials">CADCAM's</a> Fusion 360 tutorial to learn more about 2D modeling and get introduced to 3D modeling. These tutorials solidified skills I had already gained while building the press-fit kit, taught new skills, and cleared up confusions I had previously. For example, I was previously not as clear as to when a sketch element, like a line or shape, is "fully defined", or how to use all the various kinds of constraints. I was also confused as to why adding certain constraints created "driven constraints". Following these tutorials and examples, I was able to understand these concepts and practice building more interesting shapes using sketch dimensions, trimming, and most of the constraints. A couple examples are shown below:
-
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/2d_1.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3"> 
-      <img src="/harvard_ps70/02_2D/pics/2d_2.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3"> 
-      <img src="/harvard_ps70/02_2D/pics/tutorial_2d.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-  </div>
-</div><br>
-
-I also followed CADCAM's tutorial on creating 3D objects, as well as <a href="https://www.youtube.com/watch?v=HBJMgkzkaas&t=633s&ab_channel=LarsChristensen">Lars Christensen's</a> tutorial on the difference between components, bodies, and assemblies in Fusion 360. From CADCAM's tutorials, I learned how to make basic 3D models, using techniques like press-pull, extrusion cuts into existing objects, joining two objects together, working in different planes for various parts of the object, and more. I also learned how to add color to an object at the end of the process. These were very helpful in getting myself familiarized with working Fusion 360 as a whole, and was really helpful in building out my own model (more on that below). An example of an object I made during these tutorials is shown below:
-
-<img src="/harvard_ps70/02_2D/pics/tutorial_3d.png" alt="tutorial3d">
-
-From Lars Christensen's tutorial, I learned that within the same build file on Fusion 360, you can create individual components that can be build separately, and later put together in assembly. This was very helpful in my mini modeling project, which I'll get into now!
-
-For my personal modeling task, I decided to model components of one of my favorite things, the Rubik's cube. To keep things simple for now, I decided to model just the core of the cube and a center side piece. The interior view of a Rubik's cube is shown below; I wanted to model simplified versions of the white core inside the cube and a center piece that connects to the core.
-
-<img src="/harvard_ps70/02_2D/pics/cube_interior.png" alt="cubeinterior">
-
-I started by creating two separate components in my Fusion 360 file, with one named "Core" and the other named "Center". Starting with the core, I decided to make a simple model of 6 intersecting pipes. I started by extruding a circle (diameter given by measured user parameters) along an axis and centering it at the origin. Next, I created an offset plane, such that I could create another circle to extrude on that plane directly. When extruding this second circle, I had it extrude outwards a given distance (based on measurements and parameters) and inwards towards the existing cylinder. I had this new cylinder be "joined" to the first cylinder. This process is shown in the two images below:
-
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/offset_plane.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3"> 
-      <img src="/harvard_ps70/02_2D/pics/offset_extrude.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-  </div>
-</div><br>
-
-I then used the "Circular Pattern" on this new extruded cylinder to wrap it around the first cylinder, giving me a full set of intersecting pipes that resemble my core:
-
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/circular_pipe.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/6pipe.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-  </div>
-</div><br>
-
-Using a very similar process, I created extrusion cuts to create the holes inside each pipe, which led to my final core design:
-
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/circle_extrude.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/final_core.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-  </div>
-</div><br>
-
-Next, I worked on the Center, which was a separate component. I could toggle the core I made in and out of view, which made for a good reference to know where to create my center piece such that they fit together in my model. My center model was simplified to be a thin cylinder that fits inside a hole in the core, a larger cylinder that rests on top of the core, both of which are connected to a rectangular prism. This process was simple, as I just built each 3D shape one by one, using offset planes to get them started at the right place. I added a fillet to the edges of the cneter for a bit more realness. This is shown in these images below:
-
-<div class="container-fluid bg-3 text-center">    
-  <div class="row">
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/center_build.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/center_final.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-    <div class="col-sm-3">
-      <img src="/harvard_ps70/02_2D/pics/cube_overlay.png" class="img-responsive" style="width:100%" alt="Image"></a>
-    </div>
-  </div>
-</div><br>
-
-After adding a black color to my center piece, my final set of components are shown below:
-
-<img src="/harvard_ps70/02_2D/pics/cube_final.png" alt="cubeinterior">
+<img src="/harvard_ps70/02_2D/pics/modeling1.png" alt="3D model of box with lid" height="300">
 
 
-Dimensions of the core and center piece were measured using a caliper, and inputted as user parameters in Fusion 360, which are shown below.
-
-<img src="/harvard_ps70/02_2D/pics/cube_parameters.png" alt="cubeparams">
-
-Finally, using assembly in Fusion 360, I was able to use the "joint" tool to create a joint origin that the center could spin around, mimicing the motion of an actual Rubik's Cube side. This allowed the two separate components to be joined at a common spot with a revolution axis. A video/gif of the spinning center will be added below:
-
-
-<img src="/harvard_ps70/02_2D/pics/cube.gif" alt="center-piece-gif">
-
-
-
+<img src="/harvard_ps70/02_2D/pics/modeling2.png" alt="3D model of box with lid" height="300">
 
 
 
