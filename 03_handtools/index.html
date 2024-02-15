@@ -57,6 +57,8 @@ This week, the assignment was to create a kinetic sculpture that could be moved 
 
 Besides the obvious inspiration -- my adorable cat, Peaches -- my inspiration came from existing cat toys. My cat really loves playing with the laser toy, so one option is a motion controlled laser. There are also toys that have a fake mouse running under a sort of fabric. Peaches loves attacking things moving under the blanket (things mostly being people), so this would also be a good option. Other toys that she currently enjoys are tiny puff balls that she kicks and chases around the apartment, stuffed toys that she stomps on, and occassionally feather toys to jump at.
 
+<img src="/harvard_ps70/03_handtools/pics/peaches.jpg" alt="picture of my cat, Peaches" height="300">
+
 I also looked through a prior student's efforts to make a cat toy <a href="https://samjo4788.github.io/PHYSCI-70/Week03/index03.html">here</a>, which is one my cat probably wouldn't like so doesn't seem like the effort of printing out gears and such. The same student did a <a href="https://samjo4788.github.io/PHYSCI-70/Week09/index09.html">later project</a> for her cat in week 9 using a servo, which seems more on my wavelength as far as projects go.
 
 Finally, I walked around the lab to get some further inspiration based on what we had laying around and happened upon some pet laser toys, which seemed worth grabbing at least to see what I could do with them.
@@ -69,7 +71,14 @@ There are a number of constraints to take into account. The toy should be small 
 
 I didn't have time to go through the process of designing and making gears (and frankly didn't have a lot of time this week for the project) so decided to use a servo and the laser to create a moving laser toy. A servo is pretty much a small motor with gears and a potentiometer that can be controlled to a certain position and speed. We have two kinds of servos in the lab, one that can rotate a full 360 degrees and one that rotates 180 degrees. Because I don't want my cat running in circles around the toy -- plus I don't have space for that -- I am using the smraza micro servo 9g S51, which rotates 180 degrees.
 
+<img src="/harvard_ps70/03_handtools/pics/servos.jpg" alt="picture of the servos we have in the lab" height="300">
+
 The servo has three wires -- the red is for power, brown is for ground, and yellow is for the signal to the Arduino, which I plugged into pin 9 based on the <a href="https://docs.arduino.cc/learn/electronics/servo-motors/#knob-circuit">Arduino docs</a>. I also installed the Servo library then got the servo moving back and forth pretty easily using the Arduino Sweep example.
+
+<video width="320" height="240" controls>
+  <source src="/harvard_ps70/03_handtools/pics/sweep.mp4" type="video/mp4">
+Your browser does not support the video tag.
+</video>
 
 But having the laser move just back and forth isn't terribly exciting, so I decided to play around with the code to have the servo move more randomly. I added five random variables to make the laser move less preditably, so my loop looked like this:
 
@@ -94,6 +103,8 @@ void loop() {
 ```
 
 To attach the laser and keep the servo straight, I made a very janky setup with foam, tape, and a zip tie. But it works!
+
+<img src="/harvard_ps70/03_handtools/pics/setup.jpg" alt="janky setup" height="300">
 
 
 ## Next Steps
