@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>PS70: Intro to Digital Fabrication</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Add a gray background color and some padding to the footer */
+    footer {
+      background-color: #f2f2f2;
+      padding: 25px;
+    }
+  </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" href="#">PS70: Intro to Digital Fabrication</a>
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a class="nav-link" href="/harvard_ps70/index.html">Home</a></li>
+        <li><a class="nav-link" href="/harvard_ps70/about.html">About</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid bg-3 text-center">    
+  <h3>Week 4: Microcontroller Programming</h3><br>
+</div>
+
+
+<xmp style="display:none;">
+<br> 
+
+## Overview
+
+For the coding/Arduino assignment this week, I wanted to start playing around with some sensors that I may use for a beaver camera trap. I went through the lab and the EE Active Learning Lab at the SEC to grab some sensors and output devices. I don't anticipate using the output for the final project, but it's fun to play around with for now.
+
+
+## Materials
+Based on what I found in the labs and what I had on hand from my TinyML class, I used the following sensors and output devices for the assignment:
+
+* <a href="https://www.mpja.com/download/31227sc.pdf">HC-SR501 motion sensor</a>
+* <a href="https://media.digikey.com/pdf/Data%20Sheets/Adafruit%20PDFs/4019_Web.pdf">US-100</a> or <a href="https://www.sparkfun.com/products/15569">HCSR04 Ultrasonic distance sensor</a>
+* <a href="https://www.sunfounder.com/products/i2c-lcd1602-module">SunFounder IIC I2C TWI 1602 Serial LCD Module Display</a> 
+* <a href="https://www.arducam.com/product/arducam-5mp-plus-spi-cam-arduino-ov5642/">Arducam 5MP Plus camera</a>
+* LED bulb
+
+
+I also used the Arduino Nano 33 BLE microcontroller because I may want to use it for my final project to be able to incorporate some TinyML techniques.
+
+
+## Step 1: Get the Motion Sensor Working
+
+I figured I should start by getting the motion sensor working, as that seems essential for the wildlife camera trap. I got it working pretty quickly -- it just uses digital input and has two values to indicate if motion is detected or not. I then used the serial output and the LED bulb to show the state of motion detection. 
+
+Because the output to the serial monitor was originally continuous, I added another variable to print to the serial only with a state change. 
+
+My Arduino code for this was:
+
+```
+  // set digital pins I'm using
+int pirInput = 2; // input for the motion sensor
+int ledOutput = 3; // output for the LED
+int serialOut = 0; // make a variable to track whether or not to print to serial
+
+void setup() {
+  pinMode(pirInput, INPUT);
+  pinMode(ledOutput, OUTPUT);
+  Serial.begin(9600); //enable serial monitor
+}
+
+void loop() {
+  bool value = digitalRead(pirInput); //get value from the motion sensor 
+  
+  // if motion is detected, turn on the LED and print to the serial monitor 
+  if (value == 1) { 
+    digitalWrite(ledOutput,HIGH); 
+    if (serialOut == 0) {
+      Serial.println("Motion detected"); 
+      serialOut = 1; // flip this so we only print to the serial monitor once
+    }
+  }
+
+  // no motion, turn off the LED and print to serial monitor 
+  else {
+    digitalWrite(ledOutput, LOW);
+    if (serialOut == 1) {
+      Serial.println("No motion detected");
+      serialOut = 0; // flip this back
+    }
+  }
+}
+```
+
+And because I love nice looking Arduino schematics, I found a <a href="https://www.circuito.io">website</a> to make some, so here's my schematic for the motion sensor.
+
+<img src="/harvard_ps70/04_ucontroller/pics/schematic1.png" alt="Arduino schematic" height="300">
+
+
+## Step 2: Add Ultrasonic Distance Sensor
+
+This sensor is pretty cool and it looks like an old school boombox. It sends out sound pulses and measures how long it takes for the sound to reflect back to itself, which then translates to how far an object is from it. Apparently this model only works for objects that are pretty close up, but there are models with more range and also <a href="https://store-usa.arduino.cc/products/waterproof-ultrasonic-sensor-with-separate-probe">waterproof ones</a>.
+
+Because it makes sense to see how far something is after you detect motion, I added in the code for distance sensing in the corresponding ``if`` statement. This incorporates setting the pins and calculating the distance based on the pulse time, for which I found an equation online.
+
+Code for this step:
+
+```
+// set digital pins I'm using
+int pirInput = 2;   // input for the motion sensor
+int ledOutput = 3;  // output for the LED
+int serialOut = 0;  // make a variable to track whether or not to print to serial
+int echoInput = 8;
+int triggerOut = 9;
+unsigned long prevMicros = 0;  // store number of microseconds
+unsigned long prevMillis = 0;  // store milliseconds
+const long echoPause = 100;
+const long delayTime = 150;
+
+void setup() {
+  pinMode(pirInput, INPUT);
+  pinMode(ledOutput, OUTPUT);
+  pinMode(echoInput, INPUT);
+  pinMode(triggerOut, OUTPUT);
+  Serial.begin(9600);  //enable serial monitor
+}
+
+void loop() {
+  bool value = digitalRead(pirInput);  //get value from the motion sensor
+  unsigned long currentMicros = micros();
+  unsigned long currentMillis = millis();
+
+  if (currentMillis - prevMillis >= delayTime) {
+    prevMillis = currentMillis;
+    // if motion is detected, turn on the LED and print to the serial monitor
+    if (value == 1) {
+      digitalWrite(ledOutput, HIGH);
+      if (serialOut == 0) {
+        Serial.println("Motion detected");
+        serialOut = 1;  // flip this so we only print to the serial monitor once
+      }
+      // get distance to object
+      digitalWrite(triggerOut, HIGH);
+      if (currentMicros - prevMicros >= echoPause) {
+        prevMicros = currentMicros;
+        digitalWrite(triggerOut, LOW);
+      }
+      digitalWrite(triggerOut, LOW);
+      long pulseTime = pulseIn(echoInput, HIGH);
+      long distanceCm = pulseTime / 29 / 2;
+      String cm = " cm";
+      Serial.println(distanceCm + cm);
+    }
+
+    // no motion, turn off the LED and print to serial monitor
+    else {
+      digitalWrite(ledOutput, LOW);
+      if (serialOut == 1) {
+        Serial.println("No motion detected");
+        serialOut = 0;  // flip this back
+      }
+    }
+  }
+}
+```
+
+## Notes
+Having a <a href="https://store-usa.arduino.cc/products/waterproof-ultrasonic-sensor-with-separate-probe">waterproof ultrasonic sensor</a> might be nice for the final project.
+
+
+
+</xmp>
+</body>
+
+<script src="../strapdown.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" ></script>
+
+</html>
