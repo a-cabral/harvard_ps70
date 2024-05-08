@@ -59,42 +59,80 @@ I am moving forward with the project to try and make a camera trap for beavers. 
 
 There are a lot of challenges around this project, including:
 
+<ul>
 
-### Materials and Timeline
+  <li>How to power devices for a few days at a time in the wild.</li>
+  <li>How to take good pictures at night</li>
+  <li>How to protect the electronics from the elements but still have the necessary elements exposed to capture motion and pictures</li>
+  <li>Whether the PIR motion sensor or the ultrasonic range finder works better for detecting motion</li>
+  <li>How to distinguish beavers from other animals</li>
+  <li>How to maintain low power mode while accommodating for the time needed to power up the sensors, camera, etc. and whether that will allow for quick enough pictures to capture beavers</li>
 
-I have to think a bit more about how I want the sensing system to work and maybe chat with Nathan to get his ideas and a better sense of our constraints. I could imagine a few options though for a beaver camera trap. Because the beavers glide along the water, I could have sensors in the water to detect motion and snap photos from there, but this either requires waterproof sensors or a waterproof enclosure that is also transparent. I think this might also need some sort of buoy to keep the hardware at the right position as the river changes height. 
+</ul>
+
+
+## Materials and Timeline
+
+I have to think a bit more about how I want the sensing system to work and maybe chat with Nathan to get his ideas and a better sense of our constraints. I could imagine a few options though for a beaver camera trap. Because the beavers glide along the water, I could have sensors in the water to detect motion and snap photos from there, but this either requires waterproof sensors or a waterproof enclosure that is also transparent. I think this might also need some sort of buoy to keep the hardware at the right position as the river changes height. (Update: this would be fun to try for the future but is out of scope for this project, so I'm sticking to out of water sensing.)
 
 Another option is to try and sense from outside of the water, but this still requires weatherproof enclosures. If everything is outside of the water, I could probably have one enclosure but it still has to be transparent for the camera unless I have a waterproof camera. Or maybe I can make some sort of umbrella to cover the entire device.
 
 For 3D modeling, I think I'll need two enclosures, one to store the Arduino and wires connecting to that and another around the camera and motion sensors, unless I get waterproof camera and motion sensors.
 
-Materials:
+###Materials:
+Because I obviously don't have enough else to do with my life, I've decided to try and build two different versions of this camera trap. One will use the ESP32CAM and the other will use an Arduino Nano and Arducam that I have from my TinyML class. The materials I'm using are:
+
 <ul>
-  <li>Arduino</li>
+  <li>Arduino Nano 33 BLE</li>
   <li>Arducam (I have one already, but there's a waterproof one too that costs $55)</li>
-  <li>PIR motion sensor (there is a <a href="https://store-usa.arduino.cc/products/waterproof-ultrasonic-sensor-with-separate-probe">weatherproof option</a> for $16)</li>
-  <li>Solar panel for power (I have a few small ones in my office that might be enough to power the device, at least for a few days of testing)</li>
-  <li>Battery (if this is large enough I maybe don't need the solar panel)</li>
+  <li>ESP32 CAM</li>
+  <li>FTDI for programming the ESP32</li>
+  <li>PIR motion sensors (there is a <a href="https://store-usa.arduino.cc/products/waterproof-ultrasonic-sensor-with-separate-probe">weatherproof option</a> for $16), but for now just using regular ones to see if they are affected by rain</li>
+  <li>Ultrasonic range finder (Nathan kindly got me a waterproof one and I may try another regular one and see if it lasts okay)</li>
+  <li>Photoresistors to sense external light and know if IR leds should turn on for nighttime pics</li>
+  <li>Solar panels for power (I have a few small ones in my office that might be enough to power the device, at least for a few days of testing)</li>
+  <li>Batteries (if they are large enough I maybe don't need the solar panels)</li>
+
+
 </ul>
 
 
-Timeline:
+###Timeline:
+This was my ideal timeline for the project. Unfortunately, several things got in the way of it including 1) so many issues getting the ESP32 CAM working, 2) endless edits on my PhD dissertation, and 3) not having my car to get out to the forest because I rear-ended a truck on my first trip out there :(. But I did manage to get a prototype working and will go back to the Harvard Forest to do more testing after the final project fair and before graduation.
+
 <ul>
   <li>Week of March 18: Get camera working and saving to SD card</li>
   <li>Week of March 25: Visit Harvard Forest, examine beaver sites, pick a site and use that to determine how the enclosure and hardware setup will work</li>
-  <li>Week of April 8: Figure out how to take photos at night, make waterproof enclosures, stand to hold everything, etc.</li>
-  <li>Week of April 15: Test everything outside in my yard with rat detection (gross). Fix bugs and anything else necessary</li>
-  <li>Week of April 22: Setup and test in Harvard Forest</li>
-  <li>Week of April 29: Go through results, determine next steps</li>
+  <li>Week of April 8 and 15: Figure out how to take photos at night, make waterproof enclosures, stand to hold everything, etc.</li>
+  <li>Week of April 22: Test everything outside in my yard with rat detection (gross). Fix bugs and anything else necessary</li>
+  <li>Week of April 29: Setup and test in Harvard Forest</li>
+  <li>Week of May 6: Go through results, determine next steps</li>
 </ul>
 
 
-### Minimum Viable Product
+## Minimum Viable Product
+The <a href="/harvard_ps70/07_output/index.html">week 7 assignment</a> has my MVP code and images.
 
 
-### Enclosure
-I'm thinking of using two Arduinos, one nano with an Arducam and an ESP32-CAM. For the ESP32-CAM, one option is to 3D print an enclosure someone already designed, such as <a href="https://www.thingiverse.com/thing:4727126">this one</a>, <a href="https://www.printables.com/model/142405-esp32-cam-indoor-and-outdoor-cases">this one</a>, or <a href="https://www.printables.com/model/75024-esp32-cam-case">this one</a>.
+## Enclosure
+As mentioned in the Materials section, I'm using two Arduino setups, one Arduino Nano with an Arducam and an ESP32-CAM. For each Arduino, I want an enclosure to hold the board, battery, wires, and anything else that can't get wet.
 
+### ESP32 CAM Enclosure
+
+For the ESP32-CAM, one option is to 3D print an enclosure someone has already designed, such as <a href="https://www.thingiverse.com/thing:4727126">this one</a>, <a href="https://www.printables.com/model/142405-esp32-cam-indoor-and-outdoor-cases">this one</a>, or <a href="https://www.printables.com/model/75024-esp32-cam-case">this one</a>.
+
+I started by printing out the 3rd option, which works really well with the ESP on its own, but I need to figure out the battery I'm going to use to determine how large the case should be.
+
+
+After initial testing, a few issues arose with the first case. 1) It only holds the ESP32, not other electronics including wires that have to be included. 2) It did not allow for any adjusting of the camera angled, which makes things a lot easier when trying to stake a metal pole in the ground and get the pictures that are desired. 3) It did not have easy ways to attach to a metal pole for actually putting out in the wild. 
+
+So to address these issues, I put together parts from different cases I found online that could hopefully work in the wild. The <a href="https://www.thingiverse.com/thing:5540145">first case </a> allows for holding the ESP32 cam, PIR motion sensor, and batteries. The <a href="https://www.thingiverse.com/thing:3816458">other case</a> has a swivel mount to adjust the camera angle. I downloaded the files for both of these cases, attached the different parts I needed using Fusion 360 and Prusa, then printed it all out.
+
+
+### Arduino Nano Enclosure
+
+
+## Code and Circuits
 
 
 

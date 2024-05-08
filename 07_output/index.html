@@ -72,6 +72,8 @@ To get it working reliably, these are the steps I have used:
 
 5) Press RST to run code.
 
+Notes: having the circuit built and connected to the ESP32 or having an SD card in it both seem to throw some errors, so start with this process to upload the code then plug everything else in.
+
 <img src="/harvard_ps70/07_output/pics/esp32_wiring.png" height="300">
 
 
@@ -89,6 +91,10 @@ NOTE: don't connect the circuit to the ESP32 before uploading the code!
 
 
 For some reason, this isn't quite working as expected. I'm not sure if it's because of the transistor or the IR sensor itself, but I'll have to do more investigation.
+
+Update: the reason this wasn't working is because of the voltages. The PIR motion sensor should be connected to 5V, not 3.3V. For now, I can connect the power from my laptop to a breadboard then use that to connect both the PIR sensor and ESP32 CAM but need a better solution for the final project. 
+
+Also, the PIR sensor works without using a transistor which makes the circuit easier to build. It does require flipping one value in the code but the code will have to be adapted anyway to accommodate for nighttime pictures so I will capture all of that in my final project.
 
 
 </xmp>
