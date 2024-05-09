@@ -351,7 +351,7 @@ void loop() {
 
 One thing I'm not sure of is why they put all the code in the setup() loop. I think maybe it's because it gets run whenever the device wakes up again? But I'd like to investigate that more.
 
-For the circuit, I followed the one on Random Nerd Tutorials, as indicated in my MVP, then added in the LED to ground, 5V, and pin 15 on the ESP.
+For the circuit, I followed the one on Random Nerd Tutorials, as indicated in my MVP, then added in the LED to ground, 5V, and pin 15 on the ESP. I'm not sure why we need the transistor and also don't know how the transistor and resistors would get soldered onto everything without using a protoboard (maybe that's just what you're supposed to use?)
 
 I also got a pretty sweet Nano circuit setup:
 
@@ -367,6 +367,8 @@ First, I'm not sure that ESP 32 CAM is the best option. Because it only has one 
 Also, I want to do more testing with the IR LED, especially around animals that aren't used to lights (aka not my cat).
 
 I think the case actually turned out pretty well, but the structure holding the case is obviously not scalable. So I will have to figure out a design for a metal structure to hold the case and make sure that is scalable.
+
+Finally, I need to figure out an external power source, ideally through solar panels so the devices can remain in the wild for a long period of time.
 
 
 ## What I learned
