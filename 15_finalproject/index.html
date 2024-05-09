@@ -110,6 +110,16 @@ This was my ideal timeline for the project. Unfortunately, several things got in
 </ul>
 
 
+## Learning about Beavers and their Locations
+
+In late March, I drove out the Harvard Forest to examine potential beaver sites and get a sense of where I might set up a sensor. You can find where beavers are active by seeing where trees have been knocked down and wood has been set up into dams. I identified two potential sites for a beaver cam. One was along a thin path that other animals also use to cross over, which would allow for incorporating some TinyML to identify beavers versus not beavers:
+
+<img src="/harvard_ps70/15_finalproject/pics/site1.jpg" width="300">
+
+The other site was by a pond where beavers were starting to build a dam:
+<img src="/harvard_ps70/15_finalproject/pics/site2.jpg" width="300">
+
+
 ## Minimum Viable Product
 The <a href="/harvard_ps70/07_output/index.html">week 7 assignment</a> has my MVP code and images.
 
@@ -128,11 +138,241 @@ After initial testing, a few issues arose with the first case. 1) It only holds 
 
 So to address these issues, I put together parts from different cases I found online that could hopefully work in the wild. The <a href="https://www.thingiverse.com/thing:5540145">first case </a> allows for holding the ESP32 cam, PIR motion sensor, and batteries. The <a href="https://www.thingiverse.com/thing:3816458">other case</a> has a swivel mount to adjust the camera angle. I downloaded the files for both of these cases, attached the different parts I needed using Fusion 360 and Prusa, then printed it all out.
 
+Unfortunately the first print did not work well with merging two of the parts - one fell off right away, so I redid the merge in Fusion then tried again.
+
+The final 3D model for the case I used with the swivel mount is in this file and shown below.
+
+<img src="/harvard_ps70/15_finalproject/pics/case.png" width="300">
+
+
+I put together some metal parts I found in the lab to make a stand for the case. Unfortunately we only had long, narrow screws so I had to zip tie it together, but it works!
+
+<img src="/harvard_ps70/15_finalproject/pics/case.jpg" width="300">
+
 
 ### Arduino Nano Enclosure
 
+The Arducam I have already has a shield and is separate from the Arduino, so a case for the Nano could be a box similar to the one for the ESP32, just with a slightly longer and narrower compartment for the Arduino, which is 10 millimeters narrower and 4 millimeters longer than the ESP. Additionally because the Arducam is separate from the Arduino, there is no need for a hole for the camera. 
+
+## How well does it work?
+
+Short answer: not well :D. I primarily focused on trying to get the ESP32CAM working because it is significantly cheaper than using the Arducam. But of course it turns out there is a reason for that. Additionally, because beavers are primarily nocturnal (or maybe crepuscular, which is a fantastic word), I focused on getting good pictures in low light. But I didn't want to use the flash which might scare off animals. And this added another challenge.
+
+With flash at night, the system captures a decent picture with motion, as seen below:
+
+<img src="/harvard_ps70/15_finalproject/pics/picture29.jpg" width="300">
+
+
+When trying to capture animal motion (using my cat as a test subject), the time it takes for the ESP to fully wake up, load the SD card, and take the picture was too slow and it missed the cat:
+
+<img src="/harvard_ps70/15_finalproject/pics/picture44.jpg" width="300">
+
+Without the flash, the picture was about what you would expect:
+
+<img src="/harvard_ps70/15_finalproject/pics/picture256.jpg" width="300">
+
+
+Unfortunately I did not have time to test the IR LED photos at night. Also hilariously because humans can't see IR it's hard to tell if it's even working :D.
+
 
 ## Code and Circuits
+
+Getting the basic code and circuit for a motion detected picture saving to an SD card was pretty straightforward and is documented in my MVP assignment for the ESP32. I updated the code for the final project to remove the delay, turn off the flash, and add functionality for the IR LED. The final code I used is:
+
+```
+// Adapted from Random Nerd Tutorials
+// takes a picture when motion is detected and saves to SD card
+// instead of flash uses the IR LED in pin #15, high is on and low is off
+ 
+#include "esp_camera.h"
+#include "Arduino.h"
+#include "FS.h"                // SD Card ESP32
+#include "SD_MMC.h"            // SD Card ESP32
+#include "soc/soc.h"           // Disable brownour problems
+#include "soc/rtc_cntl_reg.h"  // Disable brownour problems
+#include "driver/rtc_io.h"
+#include <EEPROM.h>            // read and write from flash memory
+// define the number of bytes you want to access
+#define EEPROM_SIZE 1
+ 
+RTC_DATA_ATTR int bootCount = 0;
+
+// Pin definition for CAMERA_MODEL_AI_THINKER
+#define PWDN_GPIO_NUM     32
+#define RESET_GPIO_NUM    -1
+#define XCLK_GPIO_NUM      0
+#define SIOD_GPIO_NUM     26
+#define SIOC_GPIO_NUM     27
+#define Y9_GPIO_NUM       35
+#define Y8_GPIO_NUM       34
+#define Y7_GPIO_NUM       39
+#define Y6_GPIO_NUM       36
+#define Y5_GPIO_NUM       21
+#define Y4_GPIO_NUM       19
+#define Y3_GPIO_NUM       18
+#define Y2_GPIO_NUM        5
+#define VSYNC_GPIO_NUM    25
+#define HREF_GPIO_NUM     23
+#define PCLK_GPIO_NUM     22
+ 
+int pictureNumber = 0;
+const long delayTimeSD = 500;
+const long delayTimeESP = 1000;
+unsigned long prevMillis = 0;  // store milliseconds
+  
+void setup() {
+  WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
+  Serial.begin(115200);
+ 
+  Serial.setDebugOutput(true);
+ 
+  camera_config_t config;
+  config.ledc_channel = LEDC_CHANNEL_0;
+  config.ledc_timer = LEDC_TIMER_0;
+  config.pin_d0 = Y2_GPIO_NUM;
+  config.pin_d1 = Y3_GPIO_NUM;
+  config.pin_d2 = Y4_GPIO_NUM;
+  config.pin_d3 = Y5_GPIO_NUM;
+  config.pin_d4 = Y6_GPIO_NUM;
+  config.pin_d5 = Y7_GPIO_NUM;
+  config.pin_d6 = Y8_GPIO_NUM;
+  config.pin_d7 = Y9_GPIO_NUM;
+  config.pin_xclk = XCLK_GPIO_NUM;
+  config.pin_pclk = PCLK_GPIO_NUM;
+  config.pin_vsync = VSYNC_GPIO_NUM;
+  config.pin_href = HREF_GPIO_NUM;
+  config.pin_sscb_sda = SIOD_GPIO_NUM;
+  config.pin_sscb_scl = SIOC_GPIO_NUM;
+  config.pin_pwdn = PWDN_GPIO_NUM;
+  config.pin_reset = RESET_GPIO_NUM;
+  config.xclk_freq_hz = 20000000;
+  config.pixel_format = PIXFORMAT_JPEG;
+
+  unsigned long currentMillis = millis();
+
+
+
+  // turn on IR LED
+  pinMode(15, OUTPUT);
+  digitalWrite(15, HIGH);
+  rtc_gpio_hold_dis(GPIO_NUM_15);
+  
+ 
+  if(psramFound()){
+    config.frame_size = FRAMESIZE_UXGA; // FRAMESIZE_ + QVGA|CIF|VGA|SVGA|XGA|SXGA|UXGA
+    config.jpeg_quality = 10;
+    config.fb_count = 2;
+  } else {
+    config.frame_size = FRAMESIZE_SVGA;
+    config.jpeg_quality = 12;
+    config.fb_count = 1;
+  }
+ 
+  // Init Camera
+  esp_err_t err = esp_camera_init(&config);
+  if (err != ESP_OK) {
+    Serial.printf("Camera init failed with error 0x%x", err);
+    return;
+  }
+ 
+  Serial.println("Starting SD Card");
+ 
+  if (currentMillis - prevMillis >= delayTimeSD) {
+    prevMillis = currentMillis;
+    if(!SD_MMC.begin()){
+      Serial.println("SD Card Mount Failed");
+      //return;
+    }
+  }
+ 
+  uint8_t cardType = SD_MMC.cardType();
+  if(cardType == CARD_NONE){
+    Serial.println("No SD Card attached");
+    return;
+  }
+   
+  camera_fb_t * fb = NULL;
+ 
+  // Take Picture with Camera
+  fb = esp_camera_fb_get();  
+  if(!fb) {
+    Serial.println("Camera capture failed");
+    return;
+  }
+  // initialize EEPROM with predefined size
+  EEPROM.begin(EEPROM_SIZE);
+  pictureNumber = EEPROM.read(0) + 1;
+ 
+  // Path where new picture will be saved in SD Card
+  String path = "/picture" + String(pictureNumber) +".jpg";
+ 
+  fs::FS &fs = SD_MMC;
+  Serial.printf("Picture file name: %s\n", path.c_str());
+ 
+  File file = fs.open(path.c_str(), FILE_WRITE);
+  if(!file){
+    Serial.println("Failed to open file in writing mode");
+  }
+  else {
+    file.write(fb->buf, fb->len); // payload (image), payload length
+    Serial.printf("Saved file to path: %s\n", path.c_str());
+    EEPROM.write(0, pictureNumber);
+    EEPROM.commit();
+  }
+  file.close();
+  esp_camera_fb_return(fb);
+  
+  if (currentMillis - prevMillis >= delayTimeESP) {
+    prevMillis = currentMillis;
+
+    // Turns off the IR LED connected to GPIO 15
+    pinMode(15, OUTPUT);
+    digitalWrite(15, LOW);
+    rtc_gpio_hold_en(GPIO_NUM_15);
+
+
+    // pin 13 is the PIR motin sensor
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_13, 0);
+ 
+    Serial.println("Going to sleep now");
+    if (currentMillis - prevMillis >= delayTimeESP) {
+      prevMillis = currentMillis;
+    esp_deep_sleep_start();
+    Serial.println("This will never be printed");
+    }
+  }
+} 
+ 
+void loop() {
+ 
+}
+```
+
+One thing I'm not sure of is why they put all the code in the setup() loop. I think maybe it's because it gets run whenever the device wakes up again? But I'd like to investigate that more.
+
+
+## Next Steps
+
+I have a lot of things I want to do to actually make this project feasible for the real world. 
+
+First, I'm not sure that ESP 32 CAM is the best option. Because it only has one 5V pin, it requires a lot of wiring hackery to get the motion sensor connected as well. And that doesn't include the addition of the Ultrasonic sensor, which will help make the system more robust. So I have to spend time figuring out if it's better to make my own PCB (which comes with its own struggles and the environmental impact of making and shipping them). Or perhaps there are easier ways to hook upeverything together and have it be scalable. Additionally, the ESP32 CAM has to be programmed via the FTDI, which is tedious and will make it hard to do any sort of software updates.
+
+Also, I want to do more testing with the IR LED, especially around animals that aren't used to lights (aka not my cat).
+
+I think the case actually turned out pretty well, but the structure holding the case is obviously not scalable. So I will have to figure out a design for a metal structure to hold the case and make sure that is scalable.
+
+
+## What I learned
+
+I learned a lot from this project, including:
+
+<ul>
+  <li> Don't take a class "for fun" when finishing your dissertation</li>
+  <li> Have an understanding of the power needs of each sensor and part of your project before putting everything together</li>
+  <li> There is a reason why night vision motion cameras are pretty expensive. Using low cost components for this requires a lot of time and work</li>
+  <li> Working with the ESP32 CAM is not for the faint of heart. But taking good notes every time helped me get a lot faster working with it</li>
+  <li> Soldering on tiny things requires a lot of hand/finger dexterity that I don't have because of symptoms from my autoimmune disease. So I have to weight that against the time/cost of designing/ordering PCBs </li>
+</ul>
 
 
 
